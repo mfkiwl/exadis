@@ -21,6 +21,10 @@
 namespace py = pybind11;
 using namespace ExaDiS;
 
+using PybindInitSubModule = void(*)(py::module_& m);
+void register_submodule(PybindInitSubModule s);
+void init_registered_submodules(py::module_& m);
+
 /*---------------------------------------------------------------------------
  *
  *    Struct:        Vec3
@@ -370,6 +374,19 @@ public:
     ~MobilityPython() {}
     const char* name() { return "MobilityPython"; }
 };
+
+template<class M>
+MobilityBind make_mobility(Params& params, typename M::Params mobparams)
+{
+    params.check_params();
+    System* system = make_system(new SerialDisNet(), Crystal(params.crystal), params);
+    
+    Mobility* mobility = new M(system, mobparams);
+    
+    exadis_delete(system);
+    
+    return MobilityBind(mobility, params);
+}
 
 
 /*---------------------------------------------------------------------------

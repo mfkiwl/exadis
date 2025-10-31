@@ -12,6 +12,27 @@
 
 /*---------------------------------------------------------------------------
  *
+ *    Submodules registry
+ *
+ *-------------------------------------------------------------------------*/
+static std::vector<PybindInitSubModule>& registry() {
+    static std::vector<PybindInitSubModule> r;
+    return r;
+}
+
+void register_submodule(PybindInitSubModule s) {
+    registry().push_back(s);
+}
+
+void init_registered_submodules(py::module_& m) {
+    for (auto s : registry()) {
+        s(m);
+    }
+}
+
+
+/*---------------------------------------------------------------------------
+ *
  *    DisNet binding functions
  *
  *-------------------------------------------------------------------------*/
@@ -503,19 +524,6 @@ MobilityBind make_mobility_python(Params& params, py::object pymobility)
     return MobilityBind(mobility, params);
 }
 
-template<class M>
-MobilityBind make_mobility(Params& params, typename M::Params mobparams)
-{
-    params.check_params();
-    System* system = make_system(new SerialDisNet(), Crystal(params.crystal), params);
-    
-    Mobility* mobility = new M(system, mobparams);
-    
-    exadis_delete(system);
-    
-    return MobilityBind(mobility, params);
-}
-
 std::vector<Vec3> compute_mobility(ExaDisNet& disnet, MobilityBind& mobbind,
                                    std::vector<Vec3> forces,
                                    std::vector<NodeTag> tags)
@@ -876,6 +884,8 @@ PYBIND11_MODULE(pyexadis, m) {
     m.doc() = "ExaDiS python module";
     
     m.attr("__version__") = EXADIS_VERSION;
+    m.attr("__build__") = "Serial";
+    m.attr("MPI") = py::bool_(false);
     
     // Constants
     m.attr("BCC_CRYSTAL") = py::int_((int)BCC_CRYSTAL);
@@ -1320,4 +1330,7 @@ PYBIND11_MODULE(pyexadis, m) {
           .def("MAX_STRAIN", &Driver::MAX_STRAIN, "Iterate to a maximum strain")
           .def("MAX_TIME", &Driver::MAX_TIME, "Iterate to a maximum simulation time")
           .def("MAX_WALLTIME", &Driver::MAX_WALLTIME, "Iterate to a maximum wall clock time");
+    
+    // Submodules
+    init_registered_submodules(m);
 }

@@ -694,6 +694,7 @@ class SimulateNetwork:
         self.restart = kwargs.get("restart", None)
         
         self.num_steps = kwargs.get('num_steps', None)
+        self.max_strain = kwargs.get('max_strain', None)
         
         self.exadis_plastic_strain = exadis_plastic_strain
         state["Etot"] = np.zeros(6)
@@ -893,7 +894,17 @@ class SimulateNetwork:
         
         # Step end
         self.step_end(N, state)
-        
+    
+    def iterate(self, N: DisNetManager, state: dict):
+        """iterate: decide whether to take a next time step or stop the simulation
+        """
+        if self.max_strain is not None:
+            iterate = np.abs(state["strain"]) < self.max_strain
+        else:
+            iterate = self.tstep < self.stop_step
+        if iterate: self.tstep += 1
+        return iterate
+    
     def run(self, N: DisNetManager, state: dict):
         
         if self.restart is not None:
@@ -911,11 +922,11 @@ class SimulateNetwork:
             N.get_disnet(ExaDisNet).write_data(os.path.join(self.write_dir, 'config.0.data'))
         
         # time stepping
-        start_step = state["istep"] if "istep" in state else 0
-        max_step = start_step + self.num_steps if self.num_steps is not None else self.max_step
+        self.tstep = state["istep"] if "istep" in state else 0
+        self.stop_step = self.tstep + self.num_steps if self.num_steps is not None else self.max_step
         
-        for tstep in range(start_step, max_step):
-            state["istep"] = tstep+1
+        while self.iterate(N, state):
+            state["istep"] = self.tstep
             self.step(N, state)
             
         # write results
@@ -939,7 +950,6 @@ class SimulateNetworkPerf(SimulateNetwork):
     def __init__(self, *args, **kwargs) -> None:
         super(SimulateNetworkPerf, self).__init__(*args, **kwargs)
         
-        self.max_strain = kwargs.get('max_strain', None)
         self.max_time = kwargs.get('max_time', None)
         self.max_walltime = kwargs.get('max_walltime', None)
         self.out_props = kwargs.get('out_props', None)

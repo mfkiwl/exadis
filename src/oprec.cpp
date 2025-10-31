@@ -396,7 +396,7 @@ void ExaDiSApp::oprec_replay(Control& ctrl, std::string oprec_file)
     
     Kokkos::fence();
     double totaltime = timer.seconds();
-    system->print_timers();
+    system->print_timers(totaltime);
     ExaDiS_log("REPLAY TIME: %f sec\n", totaltime);
 }
 

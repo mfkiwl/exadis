@@ -684,7 +684,7 @@ void ExaDiSApp::run(Control& ctrl)
     
     Kokkos::fence();
     double totaltime = timer.seconds();
-    system->print_timers();
+    system->print_timers(totaltime);
     ExaDiS_log("RUN TIME: %f sec\n", totaltime);
 }
 

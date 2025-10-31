@@ -236,7 +236,7 @@ struct SystemBind : ExaDisNet {
     void set_applied_stress(std::vector<double> applied_stress) { 
         system->extstress = Mat33().voigt(applied_stress.data()); 
     }
-    void print_timers(bool dev) { system->print_timers(dev); }
+    void print_timers(double timetot, bool dev) { system->print_timers(timetot, dev); }
 };
 
 

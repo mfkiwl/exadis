@@ -1063,9 +1063,9 @@ class SimulateNetworkPerf(SimulateNetwork):
         # update state dictionary
         state = driver.update_state(state)
         
-        t1 = time.perf_counter()
-        system.print_timers()
-        print('RUN TIME: %f sec' % (t1-t0))
+        timetot = time.perf_counter()-t0
+        system.print_timers(timetot=timetot)
+        print('RUN TIME: %f sec' % timetot)
         
         return state
         

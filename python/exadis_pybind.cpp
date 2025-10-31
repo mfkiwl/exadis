@@ -1044,7 +1044,7 @@ PYBIND11_MODULE(pyexadis, m) {
         .def(py::init<ExaDisNet, Params>())
         .def("set_neighbor_cutoff", &SystemBind::set_neighbor_cutoff, "Set set_neighbor cutoff of the system")
         .def("set_applied_stress", &SystemBind::set_applied_stress, "Set applied stress of the system (xx,yy,zz,yz,xz,xy)")
-        .def("print_timers", &SystemBind::print_timers, "Print simulation timers", py::arg("dev")=false);
+        .def("print_timers", &SystemBind::print_timers, "Print simulation timers", py::arg("timetot")=-1.0, py::arg("dev")=false);
     
     py::class_<MobilityType::GLIDE::Params>(m, "Mobility_GLIDE_Params")
         .def(py::init<double>(), py::arg("Mglide"))

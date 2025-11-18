@@ -395,8 +395,9 @@ class MobilityLaw:
             vmax = kwargs.get('vmax', -1.0)
             mobility_field = kwargs.get('mobility_field', "")
             friction_field = kwargs.get('friction_field', "")
+            Fscale = kwargs.get('Fscale', 1.0)
             mobparams = pyexadis.Mobility_FCC_0_FRIC_Params(Medge, Mscrew, Fedge, Fscrew, vmax,
-                                                            mobility_field, friction_field)
+                                                            mobility_field, friction_field, Fscale)
             self.mobility = pyexadis.make_mobility_fcc_0_fric(params=params, mobparams=mobparams)
             
         elif self.mobility_law == 'FCC_0B':

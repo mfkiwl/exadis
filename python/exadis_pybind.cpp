@@ -1097,9 +1097,9 @@ PYBIND11_MODULE(pyexadis, m) {
     py::class_<MobilityType::FCC_0::Params>(m, "Mobility_FCC_0_Params")
         .def(py::init<double, double, double>(), py::arg("Medge"), py::arg("Mscrew"), py::arg("vmax")=-1.0);
     py::class_<MobilityType::FCC_0_FRIC::Params>(m, "Mobility_FCC_0_FRIC_Params")
-        .def(py::init<double, double, double, double, double, std::string, std::string>(), 
+        .def(py::init<double, double, double, double, double, std::string, std::string, double>(), 
         py::arg("Medge"), py::arg("Mscrew"), py::arg("Fedge")=0.0, py::arg("Fscrew")=0.0, py::arg("vmax")=-1.0,
-        py::arg("mobility_field")="", py::arg("friction_field")="");
+        py::arg("mobility_field")="", py::arg("friction_field")="", py::arg("Fscale")=1.0);
     py::class_<MobilityType::FCC_0B::Params>(m, "Mobility_FCC_0B_Params")
         .def(py::init<double, double, double, double, double>(), py::arg("Medge"), py::arg("Mscrew"),
         py::arg("Mclimb"), py::arg("Mclimbjunc")=-1.0, py::arg("vmax")=-1.0);
